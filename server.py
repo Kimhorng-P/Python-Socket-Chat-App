@@ -28,9 +28,13 @@ def handle_client(conn, addr):
                 connected = False
 
             print(f"[{addr}] {msg}")
-            with clients_lock:
-                for c in clients:
-                    c.sendall(f"[{addr}] {msg}".encode(FORMAT))
+            conn.send(f"Message from {addr} recieved by sever.".encode(FORMAT))
+            # input response to client
+            server_message = input(f"Enter response for {addr}: ")
+            conn.send(f"Server: {server_message}".encode(FORMAT))
+            # with clients_lock:
+            #     for c in clients:
+            #         c.sendall(f"[{addr}] {msg}".encode(FORMAT))
 
     finally:
         with clients_lock:

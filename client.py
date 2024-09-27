@@ -1,5 +1,6 @@
 import socket
 import time
+import threading
 
 PORT = 5050
 SERVER = "localhost"
@@ -13,6 +14,17 @@ def connect():
     client.connect(ADDR)
     return client
 
+#  dispaly message from the server
+def receive_msg_server(client):
+    while True:
+        try: 
+            response = client.recv(1024).decode(FORMAT)
+            if response: 
+                print(f"Server: {response}")
+        except Exception as e:
+            print("ERROR!")
+            client.close()
+            break
 
 def send(client, msg):
     message = msg.encode(FORMAT)
@@ -25,6 +37,9 @@ def start():
         return
 
     connection = connect()
+    # handle income message from server 
+    receive_thread = threading.Thread(target = receive_msg_server, args=(connection,))
+    receive_thread.start()
     while True:
         msg = input("Message (q for quit): ")
 
